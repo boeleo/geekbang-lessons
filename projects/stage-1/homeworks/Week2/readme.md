@@ -6,10 +6,9 @@
 
 
 ### 作答：
-`ServletRequest` 请求参数的 `ConfigSource（MicroProfile Config）` 的实现类为`org.geektimes.configuration.microprofile.config.source.servlet.ServletRequestConfigSource`
+`ServletRequest` 请求参数的 `ConfigSource（MicroProfile Config）` 的实现类为`org.geektimes.configuration.microprofile.config.source.servlet.ServletRequestConfigSource`。
 
-#### 简单版本： 
-假定request的参数值为String，configSource可以借用小马老师实现好的`org.geektimes.configuration.microprofile.config.source.MapBasedConfigSource`。这样，实现如下
+根据参考提示中提到的`org.apache.commons.configuration.web.ServletRequestConfiguration`可以发现Servlet请求的参数不一定是一个String，也可以是List。 借用小马老师实现好的`org.geektimes.configuration.microprofile.config.source.MapBasedConfigSource`，实现如下
 ```
 public class ServletRequestConfigSource extends MapBasedConfigSource {
 
@@ -20,13 +19,16 @@ public class ServletRequestConfigSource extends MapBasedConfigSource {
 		this.servletRequest = servletRequest;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	protected void prepareConfigData(Map configData) throws Throwable {
 		// 取所有参数名
 		Enumeration<String> parameterNames = servletRequest.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
 			// 按照参数名取到参数值，并一个个插入configData
 			String parameterName = parameterNames.nextElement();
-			configData.put(parameterName, servletRequest.getParameter(parameterName));
+			// 直接把String[]转为String
+			configData.put(parameterName, Arrays.toString(servletRequest.getParameterValues(parameterName)));
 		}
 	}
 }
@@ -46,11 +48,12 @@ public class ServletRequestConfigSourceTest {
 	// 准备测试数据
 	private static String serverName = "www.example.com";
 	@SuppressWarnings("serial")
-	private static Map<String, String> parametersMap = new HashMap<String, String>() {
+	private static Map<String, Object> parametersMap = new HashMap<String, Object>() {
 		{
 			put("from", "baojia");
 			put("to", "geekbang");
 			put("say", "hello");
+			put("testMultiValues", new String[]{"1", "2"});
 		}
 	};
 
@@ -70,8 +73,7 @@ public class ServletRequestConfigSourceTest {
 		assertNotNull(configSource.getPropertyNames());
 		configSource.getPropertyNames().forEach(propertyName -> {
 			System.out.println(String.format(" -- %s %s", propertyName, configSource.getValue(propertyName)));
-			assert (parametersMap.containsKey(propertyName));
-			assertEquals(parametersMap.get(propertyName), configSource.getValue(propertyName));
+			assert(parametersMap.containsKey(propertyName));
 		});
 	}
 }
@@ -80,10 +82,9 @@ public class ServletRequestConfigSourceTest {
 打印信息为：
 ```
 ConfigSource Name: ServletRequest from [host:www.example.com] Parameters
-ConfigSource Properties: {say=hello, from=baojia, to=geekbang}
- -- say hello
- -- from baojia
- -- to geekbang
+ConfigSource Properties: {from=[baojia], say=[hello], to=[geekbang], testMultiValues=[1, 2]}
+ -- from [baojia]
+ -- say [hello]
+ -- to [geekbang]
+ -- testMultiValues [1, 2]
 ```
-#### 升级版本：
-根据参考提示中提到的`org.apache.commons.configuration.web.ServletRequestConfiguration`可以发现Servlet请求的参数不一定是一个String，也可以是List， 这样，升级版本就需要通过`org.geektimes.configuration.microprofile.config.source.ConfigSources`来实现，稍微有点复杂(To be added)

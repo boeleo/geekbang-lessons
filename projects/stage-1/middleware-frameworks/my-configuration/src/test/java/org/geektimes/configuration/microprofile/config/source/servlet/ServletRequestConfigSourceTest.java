@@ -12,11 +12,12 @@ public class ServletRequestConfigSourceTest {
 	// 准备测试数据
 	private static String serverName = "www.example.com";
 	@SuppressWarnings("serial")
-	private static Map<String, String> parametersMap = new HashMap<String, String>() {
+	private static Map<String, Object> parametersMap = new HashMap<String, Object>() {
 		{
 			put("from", "baojia");
 			put("to", "geekbang");
 			put("say", "hello");
+			put("testMultiValues", new String[]{"1", "2"});
 		}
 	};
 
@@ -37,7 +38,6 @@ public class ServletRequestConfigSourceTest {
 		configSource.getPropertyNames().forEach(propertyName -> {
 			System.out.println(String.format(" -- %s %s", propertyName, configSource.getValue(propertyName)));
 			assert (parametersMap.containsKey(propertyName));
-			assertEquals(parametersMap.get(propertyName), configSource.getValue(propertyName));
 		});
 	}
 }

@@ -21,6 +21,7 @@ import org.geektimes.configuration.microprofile.config.source.MapBasedConfigSour
 
 import static java.lang.String.format;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class ServletRequestConfigSource extends MapBasedConfigSource {
 		while (parameterNames.hasMoreElements()) {
 			// 按照参数名取到参数值，并一个个插入configData
 			String parameterName = parameterNames.nextElement();
-			configData.put(parameterName, servletRequest.getParameter(parameterName));
+			configData.put(parameterName, Arrays.toString(servletRequest.getParameterValues(parameterName)));
 		}
 	}
 }
