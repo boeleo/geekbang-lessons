@@ -21,6 +21,7 @@ import org.geektimes.configuration.microprofile.config.source.MapBasedConfigSour
 
 import static java.lang.String.format;
 
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
 

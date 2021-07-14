@@ -3,6 +3,7 @@ package org.geektimes.configuration.microprofile.config.source.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -10,11 +11,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class ServletRequestConfigSourceTest {
 	// 准备测试数据
 	private static String serverName = "www.example.com";
-	private static Map<String, String> parametersMap = Map.of(
-		"from", "baojia",
-		"to", "geekbang",
-		"say", "hello"
-	);
+	@SuppressWarnings("serial")
+	private static Map<String, String> parametersMap = new HashMap<String, String>() {
+		{
+			put("from", "baojia");
+			put("to", "geekbang");
+			put("say", "hello");
+		}
+	};
 
 	@Test
 	public void test() {
@@ -32,7 +36,7 @@ public class ServletRequestConfigSourceTest {
 		assertNotNull(configSource.getPropertyNames());
 		configSource.getPropertyNames().forEach(propertyName -> {
 			System.out.println(String.format(" -- %s %s", propertyName, configSource.getValue(propertyName)));
-			assert(parametersMap.containsKey(propertyName));
+			assert (parametersMap.containsKey(propertyName));
 			assertEquals(parametersMap.get(propertyName), configSource.getValue(propertyName));
 		});
 	}
