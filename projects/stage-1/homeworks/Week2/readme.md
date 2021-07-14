@@ -45,11 +45,14 @@ public class ServletRequestConfigSource extends MapBasedConfigSource {
 public class ServletRequestConfigSourceTest {
 	// 准备测试数据
 	private static String serverName = "www.example.com";
-	private static Map<String, String> parametersMap = Map.of(
-		"from", "baojia",
-		"to", "geekbang",
-		"say", "hello"
-	);
+	@SuppressWarnings("serial")
+	private static Map<String, String> parametersMap = new HashMap<String, String>() {
+		{
+			put("from", "baojia");
+			put("to", "geekbang");
+			put("say", "hello");
+		}
+	};
 
 	@Test
 	public void test() {
@@ -67,13 +70,12 @@ public class ServletRequestConfigSourceTest {
 		assertNotNull(configSource.getPropertyNames());
 		configSource.getPropertyNames().forEach(propertyName -> {
 			System.out.println(String.format(" -- %s %s", propertyName, configSource.getValue(propertyName)));
-			assert(parametersMap.containsKey(propertyName));
+			assert (parametersMap.containsKey(propertyName));
 			assertEquals(parametersMap.get(propertyName), configSource.getValue(propertyName));
 		});
 	}
 }
 ```
-
 
 打印信息为：
 ```
