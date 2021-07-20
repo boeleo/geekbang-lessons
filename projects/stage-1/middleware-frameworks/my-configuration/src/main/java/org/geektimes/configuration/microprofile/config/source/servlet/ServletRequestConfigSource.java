@@ -47,7 +47,7 @@ public class ServletRequestConfigSource extends MapBasedConfigSource {
 		while (parameterNames.hasMoreElements()) {
 			// 按照参数名取到参数值，并一个个插入configData
 			String parameterName = parameterNames.nextElement();
-			configData.put(parameterName, Arrays.toString(servletRequest.getParameterValues(parameterName)));
+			configData.put(parameterName, servletRequest.getParameter(parameterName));
 		}
 	}
 }
