@@ -17,8 +17,8 @@ public interface EchoService {
 			delay = 0, maxDuration = 0, jitter = 0,
 			retryOn = UnsupportedOperationException.class)
 	@Fallback(fallbackMethod = "fallback")
-	public String echo(Long value) throws UnsupportedOperationException;
+	public String echo(Long value);
 
 	@Fallback(fallbackMethod = "fallback")
-	public String echo() throws Exception;
+	public String echo();
 }

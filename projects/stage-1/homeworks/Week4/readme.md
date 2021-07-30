@@ -87,15 +87,21 @@ public class EchoServiceImp implements EchoService {
     throw new UnsupportedOperationException();
   }
 
-  public String fallback() {
+  public String fallback(Long value) {
     // fallback 函数的定义应该与被拦截函数一致
-    System.out.println(format("[%s] - echo : fallbackTask", Thread.currentThread().getName()));
-    return "fallbackTask";
+    System.out.println(format("[%s] - echo : fallback(Long value)", Thread.currentThread().getName()));
+    return String.valueOf(value);
   }
 
   @Override
   public String echo() throws Exception {
     throw new UnsupportedOperationException();
+  }
+
+  public String fallback() {
+    // fallback 函数的定义应该与被拦截函数一致
+    System.out.println(format("[%s] - echo : fallback()", Thread.currentThread().getName()));
+    return "fallbackTask";
   }
 
 }
@@ -111,7 +117,7 @@ public class JdkProxyInterceptorEnhancerTest {
     @Before
     public void init() {
         // 获取 JDK Proxy,
-        // loadInterceptors() 高优先值的拦截优先级别高
+        // loadInterceptors() 高优先值的拦截优先处理。
         echoService = enhancer.enhance(echoService, loadInterceptors());
     }
     
@@ -129,9 +135,9 @@ public class JdkProxyInterceptorEnhancerTest {
     
     @Test
     public void testRetryEcho() {
-        // 此处由于 @Retry 的优先级别比 @Fallback 高，
-        // 执行的是 @Retry
-        echoService.echo(Long.valueOf(1L));
+        // 由之后的打印结果可以发现, 此处 @Retry 先于 @Fallback 处理了 Exception, 
+        // 导致 Fallback 没有抓到Exception而被处理, 因此 fallback(Long value) 没有执行
+        System.err.println(echoService.echo(Long.valueOf(1L)));
     }
     
     @Test
@@ -144,11 +150,15 @@ public class JdkProxyInterceptorEnhancerTest {
 
 - 运行单元测试之后，打印结果如下：   
 ```
-[ForkJoinPool.commonPool-worker-3] - echo : Hello, Echo
+[main] - echo : Hello, Echo
 [ForkJoinPool.commonPool-worker-3] - echo : Hello, Asynchronous
-[main] - echo : fallbackTask
+[main] - echo : fallback()
 [main] - echo : 1
 [main] - echo : 1
 [main] - echo : 1
 [main] - echo : 1
+null
 ```
+
+- 思考：看到打印的结果，我比较困惑的是同时添加了 @Retry 和 @Fallback 的 `echo(Long value)` 为什么只打印的 Retry 部分的内容。   
+后来通过打断点调试代码之后发现，在 `org.geektimes.interceptor.ChainableInvocationContext.proceed()` 中，拦截器以优先级值由小到大遍历，当遍历到被标注的拦截器时，执行它的 `execute(context, bindingAnnotation)` 方法。在此被标注过的拦截器就是 @Retry 和 @Fallback，因此 `FallbackInterceptor.execute` 和 `RetryInterceptor.execute` 就会被先后执行。由于这两个 execute 方法都是先执行 `context.proceed()` 进入下一个拦截器，等抓到 Exception 之后再相应的处理， 虽然 `FallbackInterceptor.execute` 先被调用，还没抓到 Exception 就先进入 `RetryInterceptor.execute`， 由于 `maxRetries` 大于 0，虽然此处也 proceed 到下一个拦截器，但是剩下的拦截器都没有被标注，直到 Interceptors 都遍历过后，执行被标注方法 `echo(Long value)` 时就会触发 Exception， 此时 Exception 会被 RetryInterceptor 拦截， 然后 Retry 三次后，返回到 `FallbackInterceptor.execute` 的时候 Exception 已经被消化掉了，所以没有调用 fallbackMethod。

@@ -23,14 +23,21 @@ public class EchoServiceImp implements EchoService {
 		throw new UnsupportedOperationException();
 	}
 
+	public String fallback(Long value) {
+		// fallback 函数的定义应该与被拦截函数一致
+		System.out.println(format("[%s] - echo : fallback(Long value)", Thread.currentThread().getName()));
+		return String.valueOf(value);
+	}
+
 	@Override
-	public String echo() throws Exception {
+	public String echo() {
 		throw new UnsupportedOperationException();
 	}
 
 	public String fallback() {
 		// fallback 函数的定义应该与被拦截函数一致
-		System.out.println(format("[%s] - echo : fallbackTask", Thread.currentThread().getName()));
+		System.out.println(format("[%s] - echo : fallback()", Thread.currentThread().getName()));
 		return "fallbackTask";
 	}
+
 }
