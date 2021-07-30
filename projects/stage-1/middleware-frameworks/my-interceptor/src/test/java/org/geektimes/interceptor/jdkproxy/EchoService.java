@@ -11,13 +11,14 @@ public interface EchoService {
 	public void echo(String message);
 
 	@Asynchronous
-    public Future<Void> echo(Object message);
-    
-	@Retry(maxRetries = 3,
-            delay = 0, maxDuration = 0, jitter = 0,
-            retryOn = UnsupportedOperationException.class)
-    @Fallback(fallbackMethod = "fallback")
-    public String echo(Long value) throws UnsupportedOperationException;
+	public Future<Void> echo(Object message);
 
-    public String fallback(Long value);
+	@Retry(maxRetries = 3,
+			delay = 0, maxDuration = 0, jitter = 0,
+			retryOn = UnsupportedOperationException.class)
+	@Fallback(fallbackMethod = "fallback")
+	public String echo(Long value) throws UnsupportedOperationException;
+
+	@Fallback(fallbackMethod = "fallback")
+	public String echo() throws Exception;
 }
