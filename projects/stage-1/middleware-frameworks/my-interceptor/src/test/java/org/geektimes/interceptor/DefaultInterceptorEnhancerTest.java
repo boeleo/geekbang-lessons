@@ -16,8 +16,6 @@
  */
 package org.geektimes.interceptor;
 
-import org.geektimes.interceptor.microprofile.faulttolerance.BuzService;
-import org.geektimes.interceptor.microprofile.faulttolerance.BuzServiceImpl;
 import org.junit.Test;
 
 import static org.geektimes.interceptor.AnnotatedInterceptor.loadInterceptors;
@@ -34,8 +32,8 @@ public class DefaultInterceptorEnhancerTest {
 
     @Test
     public void testInterface() {
-        BuzService buzService = new BuzServiceImpl();
-        buzService = interceptorEnhancer.enhance(buzService, BuzService.class, loadInterceptors());
-        buzService.task();
+        EchoService echoService = new EchoService();
+        echoService = interceptorEnhancer.enhance(echoService, loadInterceptors());
+        echoService.echo("Hello,World");
     }
 }

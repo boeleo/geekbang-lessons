@@ -17,12 +17,15 @@
 package org.geektimes.interceptor.cglib;
 
 import net.sf.cglib.proxy.MethodProxy;
+import org.geektimes.interceptor.ReflectiveMethodInvocationContext;
 
 import javax.interceptor.InvocationContext;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * {@link InvocationContext} on method using CGLIB
@@ -31,59 +34,13 @@ import java.util.Map;
  * @since 1.0.0
  */
 
-public class CglibMethodInvocationContext implements InvocationContext {
-
-    private final Object target;
-
-    private final Method method;
+class CglibMethodInvocationContext extends ReflectiveMethodInvocationContext {
 
     private final MethodProxy proxy;
 
-    private Object[] parameters;
-
-    private final Map<String, Object> contextData;
-
     public CglibMethodInvocationContext(Object target, Method method, MethodProxy proxy, Object... parameters) {
-        this.target = target;
-        this.method = method;
+        super(target, method, parameters);
         this.proxy = proxy;
-        this.parameters = parameters;
-        this.contextData = new HashMap<>();
-    }
-
-    @Override
-    public Object getTarget() {
-        return target;
-    }
-
-    @Override
-    public Object getTimer() {
-        return null;
-    }
-
-    @Override
-    public Method getMethod() {
-        return method;
-    }
-
-    @Override
-    public Constructor<?> getConstructor() {
-        return null;
-    }
-
-    @Override
-    public Object[] getParameters() {
-        return parameters;
-    }
-
-    @Override
-    public void setParameters(Object[] params) {
-        this.parameters = params;
-    }
-
-    @Override
-    public Map<String, Object> getContextData() {
-        return contextData;
     }
 
     @Override
