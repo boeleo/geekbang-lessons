@@ -16,17 +16,6 @@
  */
 package org.geektimes.configuration.microprofile.config.source.servlet.initializer;
 
-<<<<<<< HEAD:projects/stage-1/middleware-frameworks/my-configuration/src/main/java/org/geektimes/configuration/microprofile/config/source/servlet/ServletRequestConfigSource.java
-import org.eclipse.microprofile.config.spi.ConfigSource;
-import org.geektimes.configuration.microprofile.config.source.MapBasedConfigSource;
-
-import static java.lang.String.format;
-
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Map;
-=======
->>>>>>> upstream/master:projects/stage-1/middleware-frameworks/my-configuration/src/main/java/org/geektimes/configuration/microprofile/config/source/servlet/initializer/ServletRequestThreadLocalListener.java
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
@@ -34,30 +23,6 @@ import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServletRequest;
 
 /**
-<<<<<<< HEAD:projects/stage-1/middleware-frameworks/my-configuration/src/main/java/org/geektimes/configuration/microprofile/config/source/servlet/ServletRequestConfigSource.java
- * {@link ServletRequest} {@link ConfigSource}
- */
-public class ServletRequestConfigSource extends MapBasedConfigSource {
-
-	private final ServletRequest servletRequest;
-
-	public ServletRequestConfigSource(ServletRequest servletRequest) {
-		super(format("ServletRequest from [host:%s] Parameters", servletRequest.getServerName()), 550);
-		this.servletRequest = servletRequest;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	protected void prepareConfigData(Map configData) throws Throwable {
-		// 取所有参数名
-		Enumeration<String> parameterNames = servletRequest.getParameterNames();
-		while (parameterNames.hasMoreElements()) {
-			// 按照参数名取到参数值，并一个个插入configData
-			String parameterName = parameterNames.nextElement();
-			configData.put(parameterName, servletRequest.getParameter(parameterName));
-		}
-	}
-=======
  * The {@link ServletRequestListener} implementation for the {@link ThreadLocal} of {@link ServletRequest}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
@@ -83,5 +48,4 @@ public class ServletRequestThreadLocalListener implements ServletRequestListener
         return requestThreadLocal.get();
     }
 
->>>>>>> upstream/master:projects/stage-1/middleware-frameworks/my-configuration/src/main/java/org/geektimes/configuration/microprofile/config/source/servlet/initializer/ServletRequestThreadLocalListener.java
 }
