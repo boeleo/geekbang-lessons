@@ -14,23 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.commons.util;
+package org.geektimes.enterprise.inject.util;
 
-import java.lang.reflect.Array;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.DefinitionException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import static org.geektimes.enterprise.inject.util.Producers.validateProducerRequiredAnnotation;
 
 /**
- * The utilities class for {@link Array}
+ * The utilities class {@link Field Producer Fields}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class ArrayUtils extends BaseUtils {
+public abstract class ProducerFields {
 
-    public static <T> T[] of(T... values) {
-        return values;
-    }
-
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
+    /**
+     * @param producerField {@link Field Producer Field}
+     * @throws DefinitionException if {@link Field Producer Field} does not annotate {@link Produces @Produces}
+     */
+    public static void validateProducerFieldProduces(Field producerField) {
+        validateProducerRequiredAnnotation(producerField, Produces.class);
     }
 }

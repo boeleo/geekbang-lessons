@@ -16,21 +16,21 @@
  */
 package org.geektimes.commons.util;
 
-import java.lang.reflect.Array;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * The utilities class for {@link Array}
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
+ * @since
  */
-public abstract class ArrayUtils extends BaseUtils {
+public abstract class MapUtils extends BaseUtils {
 
-    public static <T> T[] of(T... values) {
-        return values;
-    }
-
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
+    public static Map of(Object... values) {
+        Map map = new LinkedHashMap();
+        int length = values.length;
+        for (int i = 0; i < length; ) {
+            map.put(values[i++], values[i++]);
+        }
+        return map;
     }
 }

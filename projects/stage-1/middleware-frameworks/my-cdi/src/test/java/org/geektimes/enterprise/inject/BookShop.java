@@ -14,23 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.commons.util;
-
-import java.lang.reflect.Array;
+package org.geektimes.enterprise.inject;
 
 /**
- * The utilities class for {@link Array}
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
+ * @since
  */
-public abstract class ArrayUtils extends BaseUtils {
-
-    public static <T> T[] of(T... values) {
-        return values;
-    }
-
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
-    }
+public class BookShop extends Business implements Shop<Book> {
 }

@@ -16,21 +16,15 @@
  */
 package org.geektimes.commons.util;
 
-import java.lang.reflect.Array;
-
 /**
- * The utilities class for {@link Array}
+ * The base utilities class
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since 1.0.0
+ * @since
  */
-public abstract class ArrayUtils extends BaseUtils {
+public abstract class BaseUtils {
 
-    public static <T> T[] of(T... values) {
-        return values;
-    }
-
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
+    protected BaseUtils() {
+        throw new RuntimeException("The utilities class must not be instantiated!");
     }
 }

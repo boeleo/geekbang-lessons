@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.commons.util;
+package org.geektimes.enterprise.inject.standard;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.enterprise.inject.spi.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 /**
+ * {@link InjectionPoint} on {@link Method}'s {@link Parameter}
+ *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
- * @since
+ * @since 1.0.0
  */
-public interface Maps {
+public class MethodParameterInjectionPoint extends AbstractInjectionPoint<AnnotatedParameter, AnnotatedMethod, Method> {
 
-    static Map of(Object... values) {
-        Map map = new LinkedHashMap();
-        int length = values.length;
-        for (int i = 0; i < length; ) {
-            map.put(values[i++], values[i++]);
-        }
-        return map;
+    public MethodParameterInjectionPoint(AnnotatedParameter annotatedParameter,
+                                         AnnotatedMethod annotatedMethod, Bean<?> bean) {
+        super(annotatedParameter, annotatedMethod, bean);
     }
 }

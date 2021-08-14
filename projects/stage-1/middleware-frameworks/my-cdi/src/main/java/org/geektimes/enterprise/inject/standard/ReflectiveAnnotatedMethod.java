@@ -14,23 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.commons.util;
+package org.geektimes.enterprise.inject.standard;
 
-import java.lang.reflect.Array;
+import javax.enterprise.inject.spi.AnnotatedField;
+import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedParameter;
+import javax.enterprise.inject.spi.AnnotatedType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
- * The utilities class for {@link Array}
+ * {@link AnnotatedMethod} based on Java reflection {@link Method}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class ArrayUtils extends BaseUtils {
+public class ReflectiveAnnotatedMethod<X> extends ReflectiveAnnotatedCallable<Method, X>
+        implements AnnotatedMethod<X> {
 
-    public static <T> T[] of(T... values) {
-        return values;
+    public ReflectiveAnnotatedMethod(Method method) {
+        super(method);
     }
 
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
+    public ReflectiveAnnotatedMethod(Method method, AnnotatedType<X> declaringType) {
+        super(method, declaringType);
+    }
+
+    @Override
+    public Type getBaseType() {
+        return getAnnotatedElement().getGenericReturnType();
     }
 }

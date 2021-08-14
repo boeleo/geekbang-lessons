@@ -24,8 +24,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.*;
 import static org.geektimes.commons.function.Streams.filterAll;
 import static org.geektimes.commons.function.Streams.filterFirst;
 import static org.geektimes.commons.reflect.util.ClassUtils.getAllInheritedTypes;
@@ -37,7 +36,7 @@ import static org.geektimes.commons.reflect.util.ClassUtils.isDerived;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AnnotationUtils {
+public abstract class AnnotationUtils extends BaseUtils {
 
     /**
      * Is the specified type a generic {@link Class type}
@@ -73,7 +72,34 @@ public class AnnotationUtils {
      * @return If found, return first matched-type {@link Annotation annotation}, or <code>null</code>
      */
     public static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement, Class<A> annotationType) {
-        return (A) filterFirst(getAllDeclaredAnnotations(annotatedElement), a -> isSameType(a, annotationType));
+        return findAnnotation(annotatedElement, a -> isSameType(a, annotationType));
+    }
+
+    /**
+     * Find the annotation that is annotated on the specified element may be a meta-annotation
+     *
+     * @param annotatedElement  the annotated element
+     * @param annotationFilters the filters of annotations
+     * @param <A>               the required type of annotation
+     * @return If found, return first matched-type {@link Annotation annotation}, or <code>null</code>
+     */
+    public static <A extends Annotation> A findAnnotation(AnnotatedElement annotatedElement,
+                                                          Predicate<Annotation>... annotationFilters) {
+        return (A) filterFirst(getAllDeclaredAnnotations(annotatedElement), annotationFilters);
+    }
+
+    public static boolean isMetaAnnotation(Annotation annotation,
+                                           Class<? extends Annotation>... metaAnnotationTypes) {
+        return isMetaAnnotation(annotation.annotationType(), metaAnnotationTypes);
+    }
+
+    public static boolean isMetaAnnotation(Class<? extends Annotation> annotationType,
+                                           Class<? extends Annotation>... metaAnnotationTypes) {
+        boolean annotated = true;
+        for (Class<? extends Annotation> metaAnnotationType : metaAnnotationTypes) {
+            annotated &= isAnnotated(annotationType, metaAnnotationType);
+        }
+        return annotated;
     }
 
     /**
@@ -91,6 +117,11 @@ public class AnnotationUtils {
         } else {
             return getDeclaredAnnotations(annotatedElement, annotationsToFilter);
         }
+    }
+
+    public static Set<Annotation> filterAnnotations(Collection<Annotation> annotations,
+                                                    Predicate<Annotation>... annotationsToFilter) {
+        return unmodifiableSet(filterAll(new LinkedHashSet<>(annotations), annotationsToFilter));
     }
 
     /**
@@ -178,6 +209,10 @@ public class AnnotationUtils {
             }
         }
         return contained;
+    }
+
+    public static boolean isAnnotated(AnnotatedElement annotatedElement, Class<? extends Annotation> annotationType) {
+        return annotatedElement != null && annotatedElement.isAnnotationPresent(annotationType);
     }
 
 }

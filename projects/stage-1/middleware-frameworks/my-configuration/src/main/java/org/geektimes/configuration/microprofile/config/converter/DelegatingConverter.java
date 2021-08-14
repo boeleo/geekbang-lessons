@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.commons.util;
+package org.geektimes.configuration.microprofile.config.converter;
 
-import java.lang.reflect.Array;
+import org.eclipse.microprofile.config.spi.Converter;
+
+import static java.util.Objects.requireNonNull;
 
 /**
- * The utilities class for {@link Array}
+ * The Delegating {@link Converter} implementation based on
+ * {@link org.geektimes.commons.convert.Converter}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
+ * @see org.geektimes.commons.convert.Converter
  * @since 1.0.0
  */
-public abstract class ArrayUtils extends BaseUtils {
+public class DelegatingConverter extends AbstractConverter {
 
-    public static <T> T[] of(T... values) {
-        return values;
+    private final Class<?> convertedType;
+
+    public DelegatingConverter(Class<?> convertedType) {
+        requireNonNull(convertedType, "The 'convertedType' must not be null!");
+        this.convertedType = convertedType;
     }
 
-    public static <T> int length(T... values) {
-        return values == null ? 0 : values.length;
+    @Override
+    protected Object doConvert(String value) throws Throwable {
+        return org.geektimes.commons.convert.Converter.convertIfPossible(value, convertedType);
     }
 }
