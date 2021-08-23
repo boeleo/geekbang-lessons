@@ -16,15 +16,17 @@
  */
 package org.geektimes.enterprise.inject.se;
 
+import org.geektimes.enterprise.inject.standard.beans.StandardBeanManager;
+
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.util.TypeLiteral;
 import java.lang.annotation.Annotation;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Logger;
+
 
 /**
  * Standard {@link SeContainer} implementation
@@ -34,44 +36,69 @@ import java.util.Set;
  */
 public class StandardContainer implements SeContainer {
 
-    private final ClassLoader classLoader;
-
-    private final Map<String, Object> properties;
-
-    private final boolean enabledDiscovery;
-
-    private final Set<Class<?>> beanClasses;
-
-    private final Map<Package, Boolean> packagesToDiscovery;
-
-    private final Map<Class<? extends Extension>, Extension> typedExtensions;
-
-    private final Set<Class<?>> interceptorClasses;
-
-    private final Set<Class<?>> decoratorClasses;
-
-    private final Set<Class<?>> alternativeClasses;
-
-    private final Set<Class<? extends Annotation>> alternativeStereotypeClasses;
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
     private boolean running;
 
-    public StandardContainer(StandardContainerInitializer initializer) {
-        this.classLoader = initializer.classLoader;
-        this.properties = initializer.properties;
-        this.enabledDiscovery = initializer.enabledDiscovery;
-        this.beanClasses = initializer.beanClasses;
-        this.packagesToDiscovery = initializer.packagesToDiscovery;
-        this.typedExtensions = initializer.typedExtensions;
-        this.interceptorClasses = initializer.interceptorClasses;
-        this.decoratorClasses = initializer.decoratorClasses;
-        this.alternativeClasses = initializer.alternativeClasses;
-        this.alternativeStereotypeClasses = initializer.alternativeStereotypeClasses;
+    private final StandardBeanManager standardBeanManager;
+
+    public StandardContainer() {
+        this.running = false;
+        // Create BeanManager
+        standardBeanManager = new StandardBeanManager();
     }
 
-    public StandardContainer initialize() {
+
+    void addBeanClasses(Class<?>... classes) {
+        standardBeanManager.beanClasses(classes);
+    }
+
+    void addPackages(boolean scanRecursively, Package... packages) {
+        standardBeanManager.packages(scanRecursively, packages);
+    }
+
+    void addExtensions(Extension... extensions) {
+        standardBeanManager.extensions(extensions);
+    }
+
+    void addInterceptors(Class<?>... interceptorClasses) {
+        standardBeanManager.interceptorClasses(interceptorClasses);
+    }
+
+    void addDecorators(Class<?>... decoratorClasses) {
+        standardBeanManager.decoratorClasses(decoratorClasses);
+    }
+
+    void addAlternatives(Class<?>... alternativeClasses) {
+        standardBeanManager.alternativeClasses(alternativeClasses);
+    }
+
+    void addAlternativeStereotypes(Class<? extends Annotation>... alternativeStereotypeClasses) {
+        standardBeanManager.alternativeStereotypeClasses(alternativeStereotypeClasses);
+    }
+
+    void setProperty(String key, Object value) {
+        standardBeanManager.property(key, value);
+    }
+
+    void setProperties(Map<String, Object> properties) {
+        standardBeanManager.properties(properties);
+    }
+
+    void disableDiscovery() {
+        standardBeanManager.disableDiscovery();
+    }
+
+    void setClassLoader(ClassLoader classLoader) {
+        standardBeanManager.classLoader(classLoader);
+    }
+
+    public void initialize() {
+        if (isRunning()) {
+            return;
+        }
+        standardBeanManager.initialize();
         running = true;
-        return this;
     }
 
     @Override
@@ -89,46 +116,46 @@ public class StandardContainer implements SeContainer {
 
     @Override
     public BeanManager getBeanManager() {
-        return null;
+        return standardBeanManager;
     }
 
     @Override
     public Instance<Object> select(Annotation... qualifiers) {
-        return null;
+        return standardBeanManager.select(qualifiers);
     }
 
     @Override
     public <U> Instance<U> select(Class<U> subtype, Annotation... qualifiers) {
-        return null;
+        return standardBeanManager.select(subtype, qualifiers);
     }
 
     @Override
     public <U> Instance<U> select(TypeLiteral<U> subtype, Annotation... qualifiers) {
-        return null;
+        return standardBeanManager.select(subtype, qualifiers);
     }
 
     @Override
     public boolean isUnsatisfied() {
-        return false;
+        return standardBeanManager.isUnsatisfied();
     }
 
     @Override
     public boolean isAmbiguous() {
-        return false;
+        return standardBeanManager.isAmbiguous();
     }
 
     @Override
     public void destroy(Object instance) {
-
+        standardBeanManager.destroy(instance);
     }
 
     @Override
     public Iterator<Object> iterator() {
-        return null;
+        return standardBeanManager.iterator();
     }
 
     @Override
     public Object get() {
-        return null;
+        return standardBeanManager.get();
     }
 }
