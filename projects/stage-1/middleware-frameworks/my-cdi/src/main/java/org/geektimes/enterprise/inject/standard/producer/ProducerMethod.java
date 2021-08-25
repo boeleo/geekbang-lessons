@@ -14,29 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.enterprise.beans.xml;
+package org.geektimes.enterprise.inject.standard.producer;
 
-import org.geektimes.enterprise.beans.xml.bind.Beans;
-
-import java.util.List;
+import javax.enterprise.inject.Produces;
+import java.lang.reflect.Method;
 
 /**
- * A Reader for {@link Beans}
+ * The class presents the {@link Method} annotated {@link Produces}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public interface BeansReader {
-
-    String BEANS_XML_RESOURCE_NAME = "META-INF/beans.xml";
-
-    /**
-     * Read All {@link Beans} instance from the XML {@link #BEANS_XML_RESOURCE_NAME resource} in the
-     * specified {@link ClassLoader}.
-     *
-     * @param classLoader the specified {@link ClassLoader}
-     * @return non-null read-only {@link List}
-     */
-    List<Beans> readAllBeans(ClassLoader classLoader);
-
+public class ProducerMethod {
 }
