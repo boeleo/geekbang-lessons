@@ -385,14 +385,13 @@ public class BeanArchiveManager {
     /**
      * @return an unmodifiable view of discovered types
      */
-    public Set<Class<?>> discoverTypes() {
-        if(!discovered){
+    public void discoverTypes() {
+        if (!discovered) {
             discoverTypesInBeanArchives();
             discoverTypesInNonBeanArchivesAsImplicit();
             discoverTypesInSyntheticBeanArchives();
             discovered = true;
         }
-        return getDiscoveredTypes();
     }
 
     private void discoverTypesInBeanArchives() {
@@ -433,8 +432,8 @@ public class BeanArchiveManager {
     private void discoverTypesInNonBeanArchivesAsImplicit() {
         if (isScanImplicitEnabled()) {
             Set<String> classPaths = ClassPathUtils.getClassPaths();
-            classPaths.stream().map(File::new).forEach(archiveFile ->{
-                Set<Class<?>> discoveredTypes = scan(classLoader,archiveFile);
+            classPaths.stream().map(File::new).forEach(archiveFile -> {
+                Set<Class<?>> discoveredTypes = scan(classLoader, archiveFile);
                 discoverDefiningAnnotationBeanTypes(discoveredTypes);
             });
         }
@@ -456,8 +455,8 @@ public class BeanArchiveManager {
         return new LinkedHashSet<>(classScanner.scan(classLoader, beansXMLResource, true, classFilters));
     }
 
-    private Set<Class<?>> scan(ClassLoader classLoader, File archiveFile,Predicate<Class<?>>... classFilters) {
-        return new LinkedHashSet<>(classScanner.scan(classLoader,archiveFile,true,classFilters));
+    private Set<Class<?>> scan(ClassLoader classLoader, File archiveFile, Predicate<Class<?>>... classFilters) {
+        return new LinkedHashSet<>(classScanner.scan(classLoader, archiveFile, true, classFilters));
     }
 
     /**
@@ -820,13 +819,21 @@ public class BeanArchiveManager {
      * @return an unmodifiable view of discovered types
      */
     public Set<Class<?>> getDiscoveredTypes() {
+        Set<Class<?>> beanClasses = getBeanClasses();
+        List<Class<?>> alternativeClasses = getAlternativeClasses();
+        List<Class<?>> interceptorClasses = getInterceptorClasses();
+        List<Class<?>> decoratorClasses = getDecoratorClasses();
+
         int size = beanClasses.size() + alternativeClasses.size()
                 + interceptorClasses.size() + decoratorClasses.size();
+
         Set<Class<?>> discoveredTypes = newLinkedHashSet(size);
+
         discoveredTypes.addAll(beanClasses);
         discoveredTypes.addAll(alternativeClasses);
         discoveredTypes.addAll(interceptorClasses);
         discoveredTypes.addAll(decoratorClasses);
+
         return unmodifiableSet(discoveredTypes);
     }
 
@@ -835,10 +842,14 @@ public class BeanArchiveManager {
     }
 
     public List<Class<?>> getInterceptorClasses() {
+        // Interceptors enabled using @Priority are called before interceptors enabled using beans.xml.
+        sort(this.interceptorClasses, PriorityComparator.INSTANCE);
         return interceptorClasses;
     }
 
     public List<Class<?>> getDecoratorClasses() {
+        // The decorator will only be executed once based on the @Priority annotation’s invocation chain.
+        sort(this.decoratorClasses, PriorityComparator.INSTANCE);
         return decoratorClasses;
     }
 

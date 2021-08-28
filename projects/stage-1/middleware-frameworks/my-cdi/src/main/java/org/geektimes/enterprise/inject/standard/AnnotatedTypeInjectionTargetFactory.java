@@ -14,16 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.enterprise.inject.standard.producer;
+package org.geektimes.enterprise.inject.standard;
 
-import javax.enterprise.inject.Produces;
-import java.lang.reflect.Method;
+import javax.enterprise.inject.spi.*;
 
 /**
- * The class presents the {@link Method} annotated {@link Produces}
+ * {@link InjectionTargetFactory} based on {@link AnnotatedType}
  *
+ * @param <T> type on which this InjectionTarget operates
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ProducerMethod {
+public class AnnotatedTypeInjectionTargetFactory<T> implements InjectionTargetFactory<T> {
+
+    private final AnnotatedType<T> annotatedType;
+
+    private final BeanManager beanManager;
+
+    public AnnotatedTypeInjectionTargetFactory(AnnotatedType<T> annotatedType, BeanManager beanManager) {
+        this.annotatedType = annotatedType;
+        this.beanManager = beanManager;
+    }
+
+    @Override
+    public InjectionTarget<T> createInjectionTarget(Bean<T> bean) {
+        return new AnnotatedTypeInjectionTarget(annotatedType, bean, beanManager);
+    }
 }
