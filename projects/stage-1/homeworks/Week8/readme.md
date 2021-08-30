@@ -27,7 +27,15 @@ public class LearnMonoDemo {
          * 数据通知。
          */
         SimplePublisher publisher = new SimplePublisher();
+        /**
+         * reactor.core.publisher.Mono.from(Publisher<? extends T>)
+         * 将 publisher 暴露给 Mono API，确保其每次只发出 0个或者 1个元素。
+         */
         Mono.from(publisher)
+            /**
+             * reactor.core.publisher.Mono.subscribe(Subscriber)
+             * 请求 publisher 开始数据流
+             */
             .subscribe(new BusinessSubscriber(5));
 
         for (int i = 0; i < 5; i++) {
