@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.enterprise.inject.util;
-
-import org.geektimes.commons.lang.util.AnnotationUtils;
-
-import javax.interceptor.Interceptor;
-import javax.interceptor.InterceptorBinding;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
+package org.geektimes.commons.event;
 
 /**
- * The utilties class for {@link Interceptor}
+ * MyEvent
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public abstract class Interceptors {
+public class MyEvent extends Event {
 
-    public static boolean isInterceptorBinding(Class<? extends Annotation> annotationType) {
-        return annotationType.isAnnotationPresent(InterceptorBinding.class);
-    }
-
-    public static boolean isInterceptor(AnnotatedElement annotatedElement) {
-        return AnnotationUtils.isAnnotationPresent(annotatedElement, Interceptor.class);
+    /**
+     * Constructs a prototypical Event.
+     *
+     * @param source The object on which the Event initially occurred.
+     * @throws IllegalArgumentException if source is null.
+     */
+    public MyEvent(Object source) {
+        super(source);
     }
 }
