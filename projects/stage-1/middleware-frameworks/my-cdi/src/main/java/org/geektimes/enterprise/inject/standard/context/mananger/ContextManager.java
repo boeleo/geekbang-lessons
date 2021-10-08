@@ -16,10 +16,12 @@
  */
 package org.geektimes.enterprise.inject.standard.context.mananger;
 
+import org.geektimes.enterprise.inject.standard.context.AbstractContext;
 import org.geektimes.enterprise.inject.util.Scopes;
 
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.Context;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Scope;
@@ -82,6 +84,15 @@ public class ContextManager {
         contexts.put(scope, context);
     }
 
+    public void addBean(Bean<?> bean) {
+        Class<? extends Annotation> scope = bean.getScope();
+        Context context = getContext(scope);
+        if(context instanceof AbstractContext){
+            AbstractContext abstractContext = (AbstractContext) context;
+            abstractContext.addBean(bean);
+        }
+    }
+
     public Context getContext(Class<? extends Annotation> scopeType) {
         Context context = contexts.get(scopeType);
         if (!context.isActive()) {
@@ -100,5 +111,9 @@ public class ContextManager {
         return Scopes.isPassivatingScope(annotationType) ||
                 // Extensions
                 syntheticNormalScopes.getOrDefault(annotationType, Boolean.FALSE);
+    }
+
+    public void destroy() {
+        // TODO
     }
 }

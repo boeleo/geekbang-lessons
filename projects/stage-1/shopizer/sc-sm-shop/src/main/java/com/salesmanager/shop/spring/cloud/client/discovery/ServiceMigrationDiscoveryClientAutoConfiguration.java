@@ -14,29 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.enterprise.inject.standard.event;
+package com.salesmanager.shop.spring.cloud.client.discovery;
 
-import org.geektimes.enterprise.inject.standard.beans.manager.StandardBeanManager;
-
-import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 
 /**
- * an event is raised after it has validated that there are no deployment problems and before creating
- * contexts or processing requests.
- *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class AfterDeploymentValidationEvent implements AfterDeploymentValidation {
+@AutoConfigureBefore(CompositeDiscoveryClientAutoConfiguration.class)
+public class ServiceMigrationDiscoveryClientAutoConfiguration {
 
-    private final StandardBeanManager standardBeanManager;
-
-    public AfterDeploymentValidationEvent(StandardBeanManager standardBeanManager) {
-        this.standardBeanManager = standardBeanManager;
-    }
-
-    @Override
-    public void addDeploymentProblem(Throwable t) {
-        standardBeanManager.addDeploymentProblem(t);
+    @Bean
+    public ServiceMigrationDiscoveryClient serviceMigrationDiscoveryClient(ObjectProvider<DiscoveryClient> discoveryClients) {
+        return new ServiceMigrationDiscoveryClient(discoveryClients);
     }
 }
