@@ -21,6 +21,7 @@ import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
+import java.lang.reflect.Type;
 
 /**
  * The Context for {@link ApplicationScoped}
@@ -28,15 +29,9 @@ import javax.enterprise.inject.spi.BeanManager;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class ApplicationScopedContext extends AbstractContext {
+public class ApplicationScopedContext extends AbstractAlterableContext {
 
     public ApplicationScopedContext(BeanManager beanManager) {
         super(beanManager, ApplicationScoped.class);
-    }
-
-    @Override
-    protected <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext,
-                        AnnotatedType<T> beanType) {
-        return null;
     }
 }

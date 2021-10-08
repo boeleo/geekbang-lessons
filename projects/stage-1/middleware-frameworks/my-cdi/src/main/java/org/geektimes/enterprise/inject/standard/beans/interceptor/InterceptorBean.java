@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package org.geektimes.enterprise.inject.standard.beans.interceptor;
+package org.geektimes.enterprise.inject.standard.beans.interceptor;
 
 import org.geektimes.enterprise.inject.standard.beans.GenericBean;
 import org.geektimes.interceptor.InterceptorInfo;
 import org.geektimes.interceptor.InterceptorManager;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.*;
 import javax.interceptor.InvocationContext;
@@ -27,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 import static java.lang.String.format;
+import static org.geektimes.enterprise.inject.util.Exceptions.newDefinitionException;
 import static org.geektimes.interceptor.InterceptorManager.getInstance;
 
 /**
@@ -36,7 +38,7 @@ import static org.geektimes.interceptor.InterceptorManager.getInstance;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-    public class InterceptorBean<T> extends GenericBean<T> implements Interceptor<T> {
+public class InterceptorBean<T> extends GenericBean<T> implements Interceptor<T> {
 
     private final AnnotatedType<?> interceptorType;
 
@@ -60,6 +62,17 @@ import static org.geektimes.interceptor.InterceptorManager.getInstance;
 
     private Set<Annotation> resolveInterceptorBindings() {
         return interceptorInfo.getInterceptorBindings().getDeclaredAnnotations();
+    }
+
+    @Override
+    public Class<? extends Annotation> getScope() {
+        Class<? extends Annotation> scope = super.getScope();
+        if (scope == null) {
+            scope = Dependent.class;
+        } else if (scope != null && !Dependent.class.equals(scope)) {
+            throw newDefinitionException("The scope of interceptor must be declared as @%s!", Dependent.class.getName());
+        }
+        return scope;
     }
 
     @Override
@@ -93,7 +106,7 @@ import static org.geektimes.interceptor.InterceptorManager.getInstance;
                 // TODO
                 break;
         }
-        return false;
+        return supported;
     }
 
     @Override
@@ -110,13 +123,11 @@ import static org.geektimes.interceptor.InterceptorManager.getInstance;
 
     @Override
     public T create(CreationalContext<T> creationalContext) {
-        // TODO
         return super.create(creationalContext);
     }
 
     @Override
     public void destroy(T instance, CreationalContext<T> creationalContext) {
-    	// TODO
         super.destroy(instance, creationalContext);
     }
 
@@ -124,7 +135,7 @@ import static org.geektimes.interceptor.InterceptorManager.getInstance;
     protected void validate(Class interceptorClass) {
         this.interceptorManager.validateInterceptorClass(interceptorClass);
     }
-    
+
     @Override
     public Annotated getAnnotated() {
         return interceptorType;
