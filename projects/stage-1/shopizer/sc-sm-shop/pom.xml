@@ -56,6 +56,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
         </dependency>
+        
+        <!-- Spring Cloud Sleuth zipkin -->
+        <dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
 
         <!-- Testing -->
         <dependency>
@@ -65,5 +71,4 @@
         </dependency>
 
     </dependencies>
-
 </project>
